@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .option {
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            text-align: center;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Quiz</h1>
+        <div class="question" id="question">Loading...</div>
+        <ul class="options" id="options">
+            <li class="option" data-answer="false">Loading...</li>
+            <li class="option" data-answer="false">Loading...</li>
+            <li class="option" data-answer="false">Loading...</li>
+            <li class="option" data-answer="false">Loading...</li>
+        </ul>
+        <button id="submit">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                options: ["London", "Berlin", "Paris", "Madrid"],
+                correctAnswer: 2,
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Mars", "Venus", "Jupiter", "Saturn"],
+                correctAnswer: 0,
+            },
+            {
+                question: "What is the largest mammal in the world?",
+                options: ["Elephant", "Giraffe", "Blue Whale", "Hippopotamus"],
+                correctAnswer: 2,
+            },
+            {
+                question: "Which gas do plants absorb from the atmosphere?",
+                options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+                correctAnswer: 1,
+            },
+            {
+                question: "What is the chemical symbol for gold?",
+                options: ["Au", "Ag", "Fe", "Cu"],
+                correctAnswer: 0,
+            },
+        ];
+
+        const questionDiv = document.getElementById('question');
+        const optionsUl = document.getElementById('options');
+        const submitButton = document.getElementById('submit');
+        const resultDiv = document.getElementById('result');
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 10; // Bonus: Set a timer for each question (in seconds)
+
+        function displayQuestion() {
+            if (currentQuestion < questions.length) {
+                questionDiv.textContent = `Question ${currentQuestion + 1}: ${questions[currentQuestion].question}`;
+                optionsUl.innerHTML = "";
+                questions[currentQuestion].options.forEach((option, index) => {
+                    const li = document.createElement('li');
+                    li.classList.add('option');
+                    li.textContent = option;
+                    li.setAttribute('data-index', index);
+                    li.addEventListener('click', handleOptionClick);
+                    optionsUl.appendChild(li);
+                });
+                startTimer();
+            } else {
+                displayFinalScore();
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 10; // Reset timer for each question
+            const timerInterval = setInterval(function () {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleOptionClick(null);
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        function handleOptionClick(e) {
+            if (e) {
+                const selectedOptionIndex = e.target.getAttribute('data-index');
+                if (selectedOptionIndex == questions[currentQuestion].correctAnswer) {
+                    score++;
+                }
+            }
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function displayFinalScore() {
+            questionDiv.textContent = "";
+            optionsUl.innerHTML = "";
+            submitButton.style.display = "none";
+            resultDiv.textContent = `Quiz Completed! Your Score: ${score}/${questions.length}`;
+        }
+
+        displayQuestion();
+
+        submitButton.addEventListener('click', handleOptionClick);
+    </script>
+</body>
+</html>
